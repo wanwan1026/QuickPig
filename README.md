@@ -3,7 +3,7 @@
 ʚ•⚇•ɞ 專案主題名稱 ʚ•⚇•ɞ
 
 [ QuickPig ]
-取名靈感來自外送平台 QUICKpick 。
+取名靈感來自外送平台 QUICKpick 。 
 目標:取代傳統服務生桌邊點餐服務。
 
 ʚ•⚇•ɞ 核心的 User Stories ʚ•⚇•ɞ
