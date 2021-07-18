@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+        <title>QuickPIG</title>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/menu.css') }}"/>
+    </head>
+    <body onload="gettable();">
+        <aside id="sidemenu">
+            <section class="outside">
+                <section class="infomation">
+                    <h3>用餐資訊 ❧ <a id="table">A3</a></h3>
+                    <a>⏳剩餘用餐時間</a>
+                    <div class="infomation_txt2">00:20:30</div>
+                </section>
+                <section class="order">
+                    <div id="order_out">
+                        <!-- <div class="order_box">
+                            <div>蕈菇雙層牛肉堡</div>
+                            <div class="order_number">
+                                <div class="order_text1">
+                                    <a>$ 190</a>
+                                </div>
+                                <div class="order_text2">
+                                    <button>-</button>
+                                    <div class="order_text22">1</div>
+                                    <button>+</button>
+                                </div>
+                            </div>
+                        </div> -->
+                    </div>
+                    
+                    <div class="order_box2">
+                        <div class="order_text1">小計</div>
+                        <div class="order_text2" id="order_all">0</div>
+                    </div>
+                </section>
+                <section class="postbox">
+                    <button class="postbox_btn" id="postbox_btn" onclick="post();">送出點餐</button>
+                </section>
+            </section>
+        </aside>
+        <button class="sidebtn" onclick="sidebtn();" id="sidebtn">
+            <a>點</a>
+            <a>餐</a>
+            <a>◀</a>
+        </button>
+        <button class="sidebtn2" onclick="sidebtn2();" id="sidebtn2">
+            <a>點</a>
+            <a>餐</a>
+            <b>▶</b>
+        </button>
+        <main>
+            <header>
+                <div class="header_box">
+                    <div class="header_logo">
+                        <img class="header_img" src="{{ url_for('static', filename='resource/LOGO-BIG.png') }}"> 
+                    </div>
+                    <button class="header_nenu1" id="mt_bt1" value="MM" onclick="mtb_change(this);">主餐</button>
+                    <button class="header_nenu2" id="mt_bt2" value="ST" onclick="mtb_change(this);">甜點</button>
+                    <button class="header_nenu2" id="mt_bt3" value="STM" onclick="mtb_change(this);">配餐</button>
+                    <button class="header_nenu2" id="mt_bt4" value="DK" onclick="mtb_change(this);">飲品</button>
+                </div>
+            </header>
+            <div class="menu">
+                <div class="open_txt"><h3>動動手指，點選餐點。</h3></div>
+                <div class="menu_box" id="menu_box">
+                    <!-- <div class="menu_inbox" id="DK-1" onclick="postMenu(this);">
+                        <img src="https://d2xsmezj0utol9.cloudfront.net/quickpig/menu/MM-01.jpg">
+                        <div class="menu_txt">$ <a class="menu_txt2">190</a></div>
+                        <div class="menu_txt">蕈菇雙層牛肉堡</div>
+                        <div class="menu_feq">2</div>
+                    </div> -->
+                </div>
+            </div>
+        </main>
+        <script src="{{ url_for('static', filename='js/menu.js') }}"></script>
+        <script defer="defer">
+            let bt1 = document.getElementById("mt_bt1");
+            bt1.onclick();
+        </script>
+    </body>
+</html>

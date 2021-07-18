@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+        <title>QuickPIG</title>
+        <style>
+            html{
+                background: #535953;
+            }
+            body{
+                margin: 0px;
+                height: 100vh;
+                background: #535953;
+            }
+        </style>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/header.css') }}"/>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/count_main.css') }}"/>
+    </head>
+    <body onload="getusetable();">
+        <header>
+            <div class="header_box">
+                <div class="header_logo" onclick="location.href='http://127.0.0.1:3000'">
+                    <img class="header_img" src="{{ url_for('static', filename='resource/LOGO-BIG.png') }}"> 
+                </div>
+            </div>
+        </header>
+        <main>
+            <div class="table">
+                <div class="table_box" id="A1-order">
+                    <div class="tb01">A1</div>
+                    <div class="table_txt">
+                        <div class="outtable">
+                            <div class="intable" id="A1-table">
+                                <!-- <div class="tableorder">單號217182</div> -->
+                            </div>
+                        </div>
+                    </div>
+                    <button class="go_btn">結帳</button>
+                </div>
+                <div class="table_box" id="A2-order">
+                    <div class="tb01">A2</div>
+                    <div class="table_txt">
+                        <div class="outtable">
+                            <div class="intable" id="A2-table">
+                                
+                            </div>
+                        </div>
+                    </div>
+                    <button class="go_btn">結帳</button>
+                </div>
+                <div class="table_box" id="A3-order">
+                    <div class="tb01">A3</div>
+                    <div class="table_txt">
+                        <div class="outtable">
+                            <div class="intable" id="A3-table">
+                                
+                            </div>
+                        </div>
+                    </div>
+                    <button class="go_btn">結帳</button>
+                </div>
+                <div class="table_box" id="A4-order">
+                    <div class="tb01">A4</div>
+                    <div class="table_txt">
+                        <div class="outtable">
+                            <div class="intable" id="A4-table">
+                                
+                            </div>
+                        </div>
+                    </div>
+                    <button class="go_btn">結帳</button>
+                </div>
+                <div class="table_box" id="A5-order">
+                    <div class="tb01">A5</div>
+                    <div class="table_txt">
+                        <div class="outtable">
+                            <div class="intable" id="A5-table">
+                                
+                            </div>
+                        </div>
+                    </div>
+                    <button class="go_btn">結帳</button>
+                </div>
+                <div class="table_box" id="A6-order">
+                    <div class="tb01">A6</div>
+                    <div class="table_txt">
+                        <div class="outtable">
+                            <div class="intable" id="A6-table">
+                                
+                            </div>
+                        </div>
+                    </div>
+                    <button class="go_btn">結帳</button>
+                </div>
+                <div class="table_box" id="A7-order">
+                    <div class="tb01">A7</div>
+                    <div class="table_txt">
+                        <div class="outtable">
+                            <div class="intable" id="A7-table">
+                                
+                            </div>
+                        </div>
+                    </div>
+                    <button class="go_btn">結帳</button>
+                </div>
+                <div class="table_box" id="A8-order">
+                    <div class="tb01">A8</div>
+                    <div class="table_txt">
+                        <div class="outtable">
+                            <div class="intable" id="A8-table">
+                                
+                            </div>
+                        </div>
+                    </div>
+                    <button class="go_btn">結帳</button>
+                </div>
+            </div>
+        </main>
+        <script src="{{ url_for('static', filename='js/count.js') }}"></script>
+    </body>
+</html>

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+        <title>QuickPIG</title>
+        <style>
+            html{
+                background: #F7F7F7;
+            }
+            body{
+                margin: 0px;
+                height: 100vh;
+                background: url("https://d2xsmezj0utol9.cloudfront.net/quickpig/back/back01.jpg");
+                background-size: cover;
+            }
+        </style>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/header.css') }}"/>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/index_main.css') }}"/>
+    </head>
+    <body>
+        <header>
+            <div class="header_box">
+                <div class="header_logo">
+                    <img class="header_img" src="{{ url_for('static', filename='resource/LOGO-BIG.png') }}"> 
+                </div>
+            </div>
+        </header>
+        <main class="system">
+            <div class="system_box" id="open_choose">
+                <div class="system_box0">
+                    <h1>請選擇登入身分</h1>
+                </div>
+                <div class="system_box1" onclick="countbtn();">
+                    <img class="sb_img" src="https://d2xsmezj0utol9.cloudfront.net/quickpig/back/back02.png">
+                    <div class="sb_box">
+                        <h1>櫃台</h1>
+                        <h4>櫃台人員，請由此進入</h4>                        
+                    </div>
+                </div> 
+                <div class="system_box2" onclick="waiterbtn();">
+                    <img class="sb_img" src="https://d2xsmezj0utol9.cloudfront.net/quickpig/back/back03.png">
+                    <div class="sb_box">
+                        <h1>服務生</h1>
+                        <h4>服務人員，請由此進入</h4>
+                    </div>    
+                </div>
+                <div class="system_box3" onclick="openbtn();">
+                    <img class="sb_img" src="https://d2xsmezj0utol9.cloudfront.net/quickpig/back/back04.png">
+                    <div class="sb_box">
+                        <h1>點餐</h1>
+                        <h4>請由此協助顧客開桌</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="system_count_box" id="count_login">
+                <div class="cb_box0">
+                    <h1>請輸入相關資料</h1>
+                </div>
+                <div class="count_box">
+                    <div class="cb_imput1">
+                        <input id="cbi_text1" class="cbi_text" placeholder="人員編號" required>
+                    </div>
+                    <div class="cb_imput2">
+                        <input id="cbi_text2" class="cbi_text" placeholder="密碼" type="password" required>
+                    </div>
+                    <hr style="width: 190px;margin: 0px auto;margin-top: 30px;margin-bottom: 5px;" size="2px" color="#373C38">
+                    <div class="cb_btn">
+                        <div class="error" id="count_error"></div>
+                        <button class="b_btn" onclick="b1_btn();">返回</button>
+                        <button class="g_byn" onclick="g1_btn();">送出</button>
+                    </div>  
+                </div>
+            </div>
+            <div class="system_count_box" id="waiter_login">
+                <div class="cb_box0">
+                    <h1>請輸入相關資料</h1>
+                </div>
+                <div class="count_box">
+                    <div class="cb_imput1">
+                        <input id="cbi_text3" class="cbi_text" placeholder="人員編號" required>
+                    </div>
+                    <div class="cb_imput2">
+                        <input id="cbi_text4" class="cbi_text" placeholder="密碼" type="password" required>
+                        
+                    </div>
+                    <hr style="width: 190px;margin: 0px auto;margin-top: 30px;margin-bottom: 5px;" size="2px" color="#373C38">
+                    <div class="cb_btn">
+                        <div class="error" id="waiter_error"></div>
+                        <button class="b_btn" onclick="b2_btn();">返回</button>
+                        <button class="g2_byn" onclick="g2_btn();">送出</button>
+                    </div>  
+                </div>
+            </div>
+            <div class="system_count_box" id="open_login">
+                <div class="cb_box0">
+                    <h1>請輸入相關資料</h1>
+                </div>
+                <div class="count_box">
+                    <div class="cb_imput1">
+                        <input id="cbi_text5" class="cbi_text" placeholder="人員編號" required>
+                    </div>
+                    <div class="cb_imput2">
+                        <input id="cbi_text6" class="cbi_text" placeholder="桌號" required>
+                    </div>
+                    <div class="cb_imput2">
+                        <input id="cbi_text7" class="cbi_text" placeholder="密碼" type="password" required>
+                        
+                    </div>
+                    <hr style="width: 190px;margin: 0px auto;margin-top: 30px;margin-bottom: 5px;" size="2px" color="#373C38">
+                    <div class="cb_btn">
+                        <div class="error" id="table_error"></div>
+                        <button class="b_btn" onclick="b3_btn();">返回</button>
+                        <button class="g3_byn" onclick="g3_btn();">開桌</button>
+                    </div>  
+                </div>
+            </div>
+        </main>
+    </body>
+    <script src="{{ url_for('static', filename='js/index.js') }}"></script>
+    <script type="text/javascript">
+        function countbtn(){
+            document.getElementById("open_choose").style.display="none";
+            document.getElementById("count_login").style.display="block";
+        }
+        function b1_btn(){
+            document.getElementById("open_choose").style.display="block";
+            document.getElementById("count_login").style.display="none";
+        }
+
+        function waiterbtn(){
+            document.getElementById("open_choose").style.display="none";
+            document.getElementById("waiter_login").style.display="block";
+        }
+        function b2_btn(){
+            document.getElementById("open_choose").style.display="block";
+            document.getElementById("waiter_login").style.display="none";
+        }
+
+        function openbtn(){
+            document.getElementById("open_choose").style.display="none";
+            document.getElementById("open_login").style.display="block";
+        }
+        function b3_btn(){
+            document.getElementById("open_choose").style.display="block";
+            document.getElementById("open_login").style.display="none";
+        }
+    </script>
+</html>
