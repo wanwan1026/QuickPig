@@ -64,7 +64,7 @@ function postok(obj){
     }).then(function(res) {
         
         console.log(res);
-        // location.reload();
+        location.reload();
 
     })
 }

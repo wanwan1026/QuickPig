@@ -72,17 +72,12 @@ function mtb_change(obj){
     .then(function(data) {
         return data.json();
     }).then(function(res) {
-        // console.log(res);
         if(res["data"] == ""){
             console.log("指定類別並無餐點")
         }
         if(res["data"] != ""){
             document.getElementById("menu_box").innerHTML = ""; 
             for(i = 0 ; i < res["data"].length ; i++){
-                // console.log(res["data"][i]["name"]);
-                // console.log(res["data"][i]["price"]);
-                // console.log(res["data"][i]["image"]);
-
                 let menu_box = document.getElementById("menu_box");
                 let menu_inbox = document.createElement("div");
                 let menu_img = document.createElement("img");
@@ -115,9 +110,9 @@ function mtb_change(obj){
                 menu_inbox.appendChild(menu_txt2);
                 menu_inbox.appendChild(req);
                 menu_box.appendChild(menu_inbox);
+                
                 if(document.getElementById(res["data"][i]["code"] + "-order")){
                     document.getElementById(res["data"][i]["code"] + "-req").style.display="block";
-                    
                     reqfeq = document.getElementById(res["data"][i]["code"] + "-order").innerText;
                     reqfeq = parseInt(reqfeq);
                     document.getElementById(res["data"][i]["code"] + "-req").innerHTML = reqfeq;
@@ -324,7 +319,17 @@ function gettable(){
     .then(function(data) {
         return data.json();
     }).then(function(res) {
-        console.log(res);
-        document.getElementById("table").innerHTML = res["table"];
+        if("ok" in res){
+            // console.log(res["ok"][0]["code"]);
+            console.log(res["ok"][0]["time"]);
+            let tableImf = document.getElementById("table");
+            let tablecode = document.createTextNode(res["ok"][0]["code"]);
+            tableImf.removeChild(tableImf.firstChild)
+            tableImf.appendChild(tablecode)
+            
+        }
+        if("error" in res){
+            console.log(res["message"]);
+        }
     })
 }
