@@ -10,9 +10,13 @@
         <aside id="sidemenu">
             <section class="outside">
                 <section class="infomation">
-                    <h3>用餐資訊 ❧ <a id="table">A3</a></h3>
+                    <h3>用餐資訊 ❧ <a id="table">桌號</a></h3>
                     <a>⏳剩餘用餐時間</a>
-                    <div class="infomation_txt2">00:20:30</div>
+                    <div class="infomation_txt2" id="timeover">
+                        <a id="hr"></a>
+                        <a id="min"></a>
+                        <a id="sec"></a>
+                    </div>
                 </section>
                 <section class="order">
                     <div id="order_out">
@@ -36,7 +40,7 @@
                         <div class="order_text2" id="order_all">0</div>
                     </div>
                 </section>
-                <section class="postbox">
+                <section class="postbox" id="postbox">
                     <button class="postbox_btn" id="postbox_btn" onclick="post();">送出點餐</button>
                 </section>
             </section>
@@ -54,7 +58,7 @@
         <main>
             <header>
                 <div class="header_box">
-                    <div class="header_logo">
+                    <div class="header_logo" id="headerlogo">
                         <img class="header_img" src="{{ url_for('static', filename='resource/LOGO-BIG.png') }}"> 
                     </div>
                     <button class="header_nenu1" id="mt_bt1" value="MM" onclick="mtb_change(this);">主餐</button>

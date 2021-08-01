@@ -319,17 +319,99 @@ function gettable(){
     .then(function(data) {
         return data.json();
     }).then(function(res) {
-        if("ok" in res){
-            // console.log(res["ok"][0]["code"]);
-            console.log(res["ok"][0]["time"]);
+        if("tablecode" in res){
+            // console.log(res);
+            // console.log(res["time"]);
             let tableImf = document.getElementById("table");
-            let tablecode = document.createTextNode(res["ok"][0]["code"]);
+            let tablecode = document.createTextNode(res["tablecode"]);
             tableImf.removeChild(tableImf.firstChild)
             tableImf.appendChild(tablecode)
-            
+            let interval = setInterval(function() {
+                let time = new Date();
+                let nowTime = time.getTime();
+                let endTime = res["time"];
+                endTime = new Date(endTime).getTime()+10000;
+                // console.log(endTime)
+                let offsetTime = (endTime - nowTime) / 1000;
+                let hr = parseInt(offsetTime / 60 / 60);
+                let min = parseInt((offsetTime / 60) % 60);
+                let sec = parseInt(offsetTime % 60);
+                if(hr >= 0 & hr < 10){
+                    hr = "0" + hr;
+                }
+                if(min >= 0 & min < 10){
+                    min = "0" + min;
+                }
+                if(sec >= 0 & sec < 10){
+                    sec = "0" + sec;
+                }
+
+                let hrTX,minTX,secTX
+                if(offsetTime <= 0){
+                    hrTX = document.createTextNode("用餐時間結束！感謝蒞臨！");
+                    minTX = document.createTextNode("");
+                    secTX = document.createTextNode("");
+                    timeout();
+                    clearInterval(interval);
+                }else{
+                    hrTX = document.createTextNode(hr + " :");
+                    minTX = document.createTextNode(min + " :");
+                    secTX = document.createTextNode(sec);
+                }
+
+                let timeover = document.getElementById("timeover");
+                let oldhr = document.getElementById("hr");
+                let oldmin = document.getElementById("min");
+                let oldsec = document.getElementById("sec");
+                let newhr = document.createElement("a");
+                let newmin = document.createElement("a");
+                let newsec = document.createElement("a");
+                newhr.appendChild(hrTX);
+                newmin.appendChild(minTX);
+                newsec.appendChild(secTX);
+                newhr.id = "hr";
+                newmin.id = "min";
+                newsec.id = "sec";
+
+                timeover.replaceChild(newhr,oldhr)
+                timeover.replaceChild(newmin,oldmin)
+                timeover.replaceChild(newsec,oldsec)
+
+            },1000);
         }
         if("error" in res){
+            // console.log(res["message"]);
+            let error = res["message"];
             console.log(res["message"]);
+            window.location.href='http://127.0.0.1:3000';
         }
+    })
+}
+
+function timeout(){
+    let tablecode = document.getElementById("table").innerHTML
+    timedata = {"timeout":tablecode}
+    let postAPI = "http://127.0.0.1:3000/table"
+    fetch(postAPI,{
+        method:'POST',
+        body:JSON.stringify(timedata),
+    })
+    .then(function(data) {
+        return data.json();
+    }).then(function(res) {
+        if("ok" in res){
+            let timeoutbtn = document.getElementById("postbox");
+            let oldbtn = document.getElementById("postbox_btn");
+            let newbtn = document.createElement("button");
+            let btntxt = document.createTextNode("暫停點餐");
+            newbtn.appendChild(btntxt)
+            newbtn.className = "postbox_btn"
+            timeoutbtn.replaceChild(newbtn,oldbtn)
+            let headerlogo = document.getElementById("headerlogo");
+            headerlogo.setAttribute("onclick","location.href='http://127.0.0.1:3000'");
+        }
+        // console.log(res);
+        // window.location.href='http://127.0.0.1:3000';
+        
     })
 }

@@ -13,6 +13,12 @@ import pymysql.cursors
 import pymysql
 # datatime
 import datetime
+# time
+import time
+# env
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 @app.route("/")
 def index():
@@ -37,17 +43,15 @@ def POSTwork():
 		host='ricetia-mysql.cyb5eosysjkk.ap-northeast-1.rds.amazonaws.com',
 		port=3306,
 		user='admin',
-		password='UUU', #記得改
+		password=os.getenv("RDS_password"),
 		db='quickpig',
 		cursorclass=pymysql.cursors.DictCursor
 	)
 	with signup.cursor() as cursor:
 		mysqlact = "UPDATE `pick` SET `finish`='true' WHERE number = %s;"
-		# mysqlact = "select * from pick where number = %s"
 		cursor.execute(mysqlact,ordercode)
 		signup.commit()
 	signup.close()
-	# return {"data":tablepick}
 
 	return {"ok":ordercode}
 
@@ -62,7 +66,7 @@ def GETwork():
 		host='ricetia-mysql.cyb5eosysjkk.ap-northeast-1.rds.amazonaws.com',
 		port=3306,
 		user='admin',
-		password='UUU', #記得改
+		password=os.getenv("RDS_password"),
 		db='quickpig',
 		cursorclass=pymysql.cursors.DictCursor
 	)
@@ -71,6 +75,7 @@ def GETwork():
 		cursor.execute(mysqlact,(today,tomorrow))
 		tablepick = cursor.fetchall()
 	signup.close()
+
 	return {"data":tablepick}
 
 @app.route("/counts",methods=['GET'])
@@ -84,7 +89,7 @@ def GETpick():
 		host='ricetia-mysql.cyb5eosysjkk.ap-northeast-1.rds.amazonaws.com',
 		port=3306,
 		user='admin',
-		password='UUU', #記得改
+		password=os.getenv("RDS_password"),
 		db='quickpig',
 		cursorclass=pymysql.cursors.DictCursor
 	)
@@ -98,8 +103,54 @@ def GETpick():
 
 @app.route("/table",methods=['GET'])
 def GETtable():
-	table = session["table_code"]
-	return {"table":table}
+	if "table_code" in session:
+		tablecode = session["table_code"]
+
+		signup = pymysql.connect(
+		host='ricetia-mysql.cyb5eosysjkk.ap-northeast-1.rds.amazonaws.com',
+		port=3306,
+		user='admin',
+		password=os.getenv("RDS_password"),
+		db='quickpig',
+		cursorclass=pymysql.cursors.DictCursor
+		)
+		with signup.cursor() as cursor:
+			mysqlact = "SELECT code,max(time) FROM opentable where code=%s"
+			cursor.execute(mysqlact,tablecode)
+			code_get = cursor.fetchall()
+		signup.close()
+
+		tabletime = str(code_get[0]["max(time)"])
+
+		return {"tablecode":code_get[0]["code"],"time":tabletime}
+	else :
+		error = {"error":True,"message": "　伺服器錯誤！無法正確載入用餐資訊"}
+
+		return error
+
+@app.route("/table",methods=['POST'])
+def POSTtable():
+	tablecode = request.data.decode('utf-8')
+	tablecode = json.loads(tablecode)
+	tablecode = tablecode["timeout"]
+
+	signup = pymysql.connect(
+		host='ricetia-mysql.cyb5eosysjkk.ap-northeast-1.rds.amazonaws.com',
+		port=3306,
+		user='admin',
+		password=os.getenv("RDS_password"),
+		db='quickpig',
+		cursorclass=pymysql.cursors.DictCursor
+	)
+	with signup.cursor() as cursor:
+		mysqlact = "UPDATE `usetable` SET `status`='false' WHERE code = %s;"
+		cursor.execute(mysqlact,tablecode)
+		signup.commit()
+	signup.close()
+
+	del session["table_code"]
+
+	return {"ok":tablecode}
 
 @app.route("/table",methods=['PATCH'])
 def PATCHtable():
@@ -112,17 +163,20 @@ def PATCHtable():
 	loginTest1 = False # 檢查參數1
 	loginTest2 = False # 檢查參數2
 	loginTest3 = False # 檢查參數3
+
+	# test1
 	if code != "" and password != "" and waiter != "":
 		loginTest1 = True
 	else :
 		error = {"error":True,"message": "　有項目未填寫！"}
 		return error
 	
+	# test3
 	signup = pymysql.connect(
 		host='ricetia-mysql.cyb5eosysjkk.ap-northeast-1.rds.amazonaws.com',
 		port=3306,
 		user='admin',
-		password='UUU', #記得改
+		password=os.getenv("RDS_password"),
 		db='quickpig',
 		cursorclass=pymysql.cursors.DictCursor
 	)
@@ -131,27 +185,26 @@ def PATCHtable():
 		cursor.execute(mysqlact,waiter)
 		waiter_check = cursor.fetchall()
 	signup.close()
-
 	if len(waiter_check) >= 1 :
 		loginTest3 = True
 	if len(waiter_check) == 0 :
 		error = {"error":True,"message": "　您沒有權限！"}
 		return error
 
+	# test2
 	signup = pymysql.connect(
 		host='ricetia-mysql.cyb5eosysjkk.ap-northeast-1.rds.amazonaws.com',
 		port=3306,
 		user='admin',
-		password='UUU', #記得改
+		password=os.getenv("RDS_password"),
 		db='quickpig',
 		cursorclass=pymysql.cursors.DictCursor
 	)
 	with signup.cursor() as cursor:
-		mysqlact = "SELECT `code`,`password` FROM `usetable` WHERE `code`=%s"
+		mysqlact = "SELECT `code`,`password`,`status` FROM `usetable` WHERE `code`=%s"
 		cursor.execute(mysqlact,code)
 		code_check = cursor.fetchall()
 	signup.close()
-
 	if len(code_check) >= 1 :
 		if code_check[0]["password"] == password :
 			loginTest2 = True
@@ -162,17 +215,60 @@ def PATCHtable():
 		error = {"error":True,"message": "　此桌號還未註冊！"}
 		return error
 
+	# finial check
 	if loginTest1 == True and loginTest2 == True and loginTest3 == True:
-		session["table_code"] = code_check[0]["code"]
-		success = {"ok":True}
-		loginTest1 = False
-		loginTest2 = False
-		return success
+		if code_check[0]["status"] == "false" :
+			signup = pymysql.connect(
+			host='ricetia-mysql.cyb5eosysjkk.ap-northeast-1.rds.amazonaws.com',
+			port=3306,
+			user='admin',
+			password=os.getenv("RDS_password"),
+			db='quickpig',
+			cursorclass=pymysql.cursors.DictCursor
+			)
+			with signup.cursor() as cursor:
+				mysqlact = "UPDATE `usetable` SET `status`='true' WHERE code = %s;"
+				cursor.execute(mysqlact,code_check[0]["code"])
+				signup.commit()
+			signup.close()
 
+			opentime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
+			
+			signup = pymysql.connect(
+			host='ricetia-mysql.cyb5eosysjkk.ap-northeast-1.rds.amazonaws.com',
+			port=3306,
+			user='admin',
+			password=os.getenv("RDS_password"),
+			db='quickpig',
+			cursorclass=pymysql.cursors.DictCursor
+			)
+			with signup.cursor() as cursor:
+				mysqlact = "INSERT INTO opentable (code,time) VALUES (%s,%s)"
+				cursor.execute(mysqlact,(code_check[0]["code"],opentime))
+				signup.commit()
+			signup.close()
+
+			session["table_code"] = code_check[0]["code"]
+			success = {"ok":True}
+			loginTest1 = False
+			loginTest2 = False
+			loginTest3 = False
+
+			return success
+		if code_check[0]["status"] == "true" :
+			session["table_code"] = code_check[0]["code"]
+			success = {"ok":True}
+			loginTest1 = False
+			loginTest2 = False
+			loginTest3 = False
+
+			return success
 	else :
 		loginTest1 = False
 		loginTest2 = False
+		loginTest3 = False
 		error = {"error":True,"message": "　伺服器錯誤！"}
+
 		return error
 
 @app.route("/user",methods=['PATCH'])
@@ -184,17 +280,20 @@ def PATCHuser():
 
 	loginTest1 = False # 檢查參數1
 	loginTest2 = False # 檢查參數2
+
+	# test1 
 	if code != "" and password != "" :
 		loginTest1 = True
 	else :
 		error = {"error":True,"message": "　有項目未填寫！"}
 		return error
 	
+	# test2
 	signup = pymysql.connect(
 		host='ricetia-mysql.cyb5eosysjkk.ap-northeast-1.rds.amazonaws.com',
 		port=3306,
 		user='admin',
-		password='UUU', #記得改
+		password=os.getenv("RDS_password"),
 		db='quickpig',
 		cursorclass=pymysql.cursors.DictCursor
 	)
@@ -203,17 +302,19 @@ def PATCHuser():
 		cursor.execute(mysqlact,code)
 		code_check = cursor.fetchall()
 	signup.close()
-
 	if len(code_check) >= 1 :
 		if code_check[0]["password"] == password :
 			loginTest2 = True
 		else :
 			error = {"error":True,"message": "　密碼輸入錯誤！"}
+
 			return error
 	if len(code_check) == 0 :
 		error = {"error":True,"message": "　此編號還未註冊！"}
+
 		return error
 
+	# finial check
 	if loginTest1 == True and loginTest2 == True :
 		session["login_id"] = code_check[0]["id"]
 		session["login_name"] = code_check[0]["name"]
@@ -222,12 +323,13 @@ def PATCHuser():
 		loginTest1 = False
 		loginTest2 = False
 		session["logout"] = False
-		return success
 
+		return success
 	else :
 		loginTest1 = False
 		loginTest2 = False
 		error = {"error":True,"message": "　伺服器錯誤！"}
+
 		return error
 
 @app.route("/menus",methods=['GET'])
@@ -238,7 +340,7 @@ def GETmenus():
 		host='ricetia-mysql.cyb5eosysjkk.ap-northeast-1.rds.amazonaws.com',
 		port=3306,
 		user='admin',
-		password='UUU', #記得改
+		password=os.getenv("RDS_password"),
 		db='quickpig',
 		cursorclass=pymysql.cursors.DictCursor
 	)
@@ -261,11 +363,12 @@ def POSTmenus():
 	today = str(today)
 	tomorrow = str(tomorrow)
 	today2 = str(today2)
+	
 	signup = pymysql.connect(
 		host='ricetia-mysql.cyb5eosysjkk.ap-northeast-1.rds.amazonaws.com',
 		port=3306,
 		user='admin',
-		password='UUU', #記得改
+		password=os.getenv("RDS_password"),
 		db='quickpig',
 		cursorclass=pymysql.cursors.DictCursor
 		)
@@ -274,6 +377,7 @@ def POSTmenus():
 		cursor.execute(mysqlact,(today,tomorrow))
 		result = cursor.fetchall()
 	signup.close()
+
 	res_number = result[0]["count(*)"] +1
 	order_number = today2 + str(res_number)
 
@@ -282,18 +386,19 @@ def POSTmenus():
 	orderData_subtotal = orderData["subtotal"]
 	orderData_table = orderData["table"]
 	finish = "false"
+	picktime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
 
 	signup = pymysql.connect(
 			host='ricetia-mysql.cyb5eosysjkk.ap-northeast-1.rds.amazonaws.com',
 			port=3306,
 			user='admin',
-			password='UUU', #記得改
+			password=os.getenv("RDS_password"),
 			db='quickpig',
 			cursorclass=pymysql.cursors.DictCursor
 			)
 	with signup.cursor() as cursor:
-		mysqlact = "INSERT INTO pick (number,content,allprice,code,finish) VALUES (%s,%s,%s,%s,%s)"
-		cursor.execute(mysqlact,(order_number,orderData_order,orderData_subtotal,orderData_table,finish))
+		mysqlact = "INSERT INTO pick (number,content,allprice,code,finish,time) VALUES (%s,%s,%s,%s,%s,%s)"
+		cursor.execute(mysqlact,(order_number,orderData_order,orderData_subtotal,orderData_table,finish,picktime))
 		signup.commit()
 	signup.close()
 
