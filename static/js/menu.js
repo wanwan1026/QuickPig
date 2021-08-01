@@ -10,7 +10,6 @@ function sidebtn2(){
 }
 
 function mtb_change(obj){
-    let getdata="";
     if(obj.value == "MM"){
         let btn1 = document.getElementById("mt_bt1");
         let btn2 = document.getElementById("mt_bt2");
@@ -21,9 +20,11 @@ function mtb_change(obj){
         btn2.style = "background-color: #FFFFFB;color: #9F353A;border-bottom: 10px #FFFFFB solid;"
         btn3.style = "background-color: #FFFFFB;color: #9F353A;border-bottom: 10px #FFFFFB solid;"
         btn4.style = "background-color: #FFFFFB;color: #9F353A;border-bottom: 10px #FFFFFB solid;"
-    
-        getdata = "MM";
-    
+        
+        document.getElementById("menu_box1").style.display="block";
+        document.getElementById("menu_box2").style.display="none";
+        document.getElementById("menu_box3").style.display="none";
+        document.getElementById("menu_box4").style.display="none";
     }
     if(obj.value == "ST"){
         let btn1 = document.getElementById("mt_bt1");
@@ -35,9 +36,11 @@ function mtb_change(obj){
         btn2.style = "background-color: #9F353A;color: #FFFFFB;border-bottom: 10px #FFFFFB double;"
         btn3.style = "background-color: #FFFFFB;color: #9F353A;border-bottom: 10px #FFFFFB solid;"
         btn4.style = "background-color: #FFFFFB;color: #9F353A;border-bottom: 10px #FFFFFB solid;"
-    
-        getdata = "ST";
-    
+
+        document.getElementById("menu_box1").style.display="none";
+        document.getElementById("menu_box2").style.display="block";
+        document.getElementById("menu_box3").style.display="none";
+        document.getElementById("menu_box4").style.display="none";
     }
     if(obj.value == "STM"){
         let btn1 = document.getElementById("mt_bt1");
@@ -49,9 +52,11 @@ function mtb_change(obj){
         btn2.style = "background-color: #FFFFFB;color: #9F353A;border-bottom: 10px #FFFFFB solid;"
         btn3.style = "background-color: #9F353A;color: #FFFFFB;border-bottom: 10px #FFFFFB double;"
         btn4.style = "background-color: #FFFFFB;color: #9F353A;border-bottom: 10px #FFFFFB solid;"
-    
-        getdata = "STM";
 
+        document.getElementById("menu_box1").style.display="none";
+        document.getElementById("menu_box2").style.display="none";
+        document.getElementById("menu_box3").style.display="block";
+        document.getElementById("menu_box4").style.display="none";
     }
     if(obj.value == "DK"){
         let btn1 = document.getElementById("mt_bt1");
@@ -64,62 +69,11 @@ function mtb_change(obj){
         btn3.style = "background-color: #FFFFFB;color: #9F353A;border-bottom: 10px #FFFFFB solid;"
         btn4.style = "background-color: #9F353A;color: #FFFFFB;border-bottom: 10px #FFFFFB double;"
 
-        getdata = "DK";
+        document.getElementById("menu_box1").style.display="none";
+        document.getElementById("menu_box2").style.display="none";
+        document.getElementById("menu_box3").style.display="none";
+        document.getElementById("menu_box4").style.display="block";
     }
-
-    let menuUrl = `http://127.0.0.1:3000/menus?class=${getdata}`;
-    fetch(menuUrl)
-    .then(function(data) {
-        return data.json();
-    }).then(function(res) {
-        if(res["data"] == ""){
-            console.log("指定類別並無餐點")
-        }
-        if(res["data"] != ""){
-            document.getElementById("menu_box").innerHTML = ""; 
-            for(i = 0 ; i < res["data"].length ; i++){
-                let menu_box = document.getElementById("menu_box");
-                let menu_inbox = document.createElement("div");
-                let menu_img = document.createElement("img");
-                let menu_txt1 = document.createElement("div");
-                let menu_txt1_1 = document.createElement("a");
-                let menu_txt2 = document.createElement("div");
-                let tx1 = document.createTextNode("$ ");
-                let tx2 = document.createTextNode(res["data"][i]["price"]);
-                let tx3 = document.createTextNode(res["data"][i]["name"]);
-                let req = document.createElement("div");
-                let req_txt = document.createTextNode("1");
-
-                menu_img.src = res["data"][i]["image"];
-                menu_txt1.className = "menu_txt";
-                menu_txt1_1.className = "menu_txt2";
-                menu_txt2.className = "menu_txt";
-                menu_inbox.className = "menu_inbox";
-                menu_inbox.id = res["data"][i]["code"];
-                menu_inbox.setAttribute("onclick","postMenu(this);");
-                req.id = res["data"][i]["code"] + "-req";
-                req.className = "menu_feq";
-                req.appendChild(req_txt);
-                
-                menu_txt1_1.appendChild(tx2);
-                menu_txt1.appendChild(tx1);
-                menu_txt1.appendChild(menu_txt1_1);
-                menu_txt2.appendChild(tx3)
-                menu_inbox.appendChild(menu_img);
-                menu_inbox.appendChild(menu_txt1);
-                menu_inbox.appendChild(menu_txt2);
-                menu_inbox.appendChild(req);
-                menu_box.appendChild(menu_inbox);
-                
-                if(document.getElementById(res["data"][i]["code"] + "-order")){
-                    document.getElementById(res["data"][i]["code"] + "-req").style.display="block";
-                    reqfeq = document.getElementById(res["data"][i]["code"] + "-order").innerText;
-                    reqfeq = parseInt(reqfeq);
-                    document.getElementById(res["data"][i]["code"] + "-req").innerHTML = reqfeq;
-                } 
-            }
-        }
-    })
 }
 
 function postMenu(obj){
@@ -314,6 +268,7 @@ function post(){
 }
 
 function gettable(){
+    // 桌號資料
     tableAPI = "http://127.0.0.1:3000/table"
     fetch(tableAPI)
     .then(function(data) {
@@ -384,6 +339,192 @@ function gettable(){
             let error = res["message"];
             console.log(res["message"]);
             window.location.href='http://127.0.0.1:3000';
+        }
+    })
+
+    // 餐點資料
+    let menuAPI = "http://127.0.0.1:3000/menus?class=MM"
+    fetch(menuAPI)
+    .then(function(data) {
+        return data.json();
+    }).then(function(res) {
+        if(res["data"] == ""){
+            console.log("指定類別並無餐點")
+        }
+        if(res["data"] != ""){
+            for(i = 0 ; i < res["data"].length ; i++){
+                let menu_box = document.getElementById("menu_box1");
+                let menu_inbox = document.createElement("div");
+                let menu_img = document.createElement("img");
+                let menu_txt1 = document.createElement("div");
+                let menu_txt1_1 = document.createElement("a");
+                let menu_txt2 = document.createElement("div");
+                let tx1 = document.createTextNode("$ ");
+                let tx2 = document.createTextNode(res["data"][i]["price"]);
+                let tx3 = document.createTextNode(res["data"][i]["name"]);
+                let req = document.createElement("div");
+                let req_txt = document.createTextNode("1");
+
+                menu_img.src = res["data"][i]["image"];
+                menu_txt1.className = "menu_txt";
+                menu_txt1_1.className = "menu_txt2";
+                menu_txt2.className = "menu_txt";
+                menu_inbox.className = "menu_inbox";
+                menu_inbox.id = res["data"][i]["code"];
+                menu_inbox.setAttribute("onclick","postMenu(this);");
+                req.id = res["data"][i]["code"] + "-req";
+                req.className = "menu_feq";
+                req.appendChild(req_txt);
+                
+                menu_txt1_1.appendChild(tx2);
+                menu_txt1.appendChild(tx1);
+                menu_txt1.appendChild(menu_txt1_1);
+                menu_txt2.appendChild(tx3)
+                menu_inbox.appendChild(menu_img);
+                menu_inbox.appendChild(menu_txt1);
+                menu_inbox.appendChild(menu_txt2);
+                menu_inbox.appendChild(req);
+                menu_box.appendChild(menu_inbox);
+                
+            }
+        }
+    })
+    menuAPI = "http://127.0.0.1:3000/menus?class=ST"
+    fetch(menuAPI)
+    .then(function(data) {
+        return data.json();
+    }).then(function(res) {
+        if(res["data"] == ""){
+            console.log("指定類別並無餐點")
+        }
+        if(res["data"] != ""){
+            for(i = 0 ; i < res["data"].length ; i++){
+                let menu_box = document.getElementById("menu_box2");
+                let menu_inbox = document.createElement("div");
+                let menu_img = document.createElement("img");
+                let menu_txt1 = document.createElement("div");
+                let menu_txt1_1 = document.createElement("a");
+                let menu_txt2 = document.createElement("div");
+                let tx1 = document.createTextNode("$ ");
+                let tx2 = document.createTextNode(res["data"][i]["price"]);
+                let tx3 = document.createTextNode(res["data"][i]["name"]);
+                let req = document.createElement("div");
+                let req_txt = document.createTextNode("1");
+
+                menu_img.src = res["data"][i]["image"];
+                menu_txt1.className = "menu_txt";
+                menu_txt1_1.className = "menu_txt2";
+                menu_txt2.className = "menu_txt";
+                menu_inbox.className = "menu_inbox";
+                menu_inbox.id = res["data"][i]["code"];
+                menu_inbox.setAttribute("onclick","postMenu(this);");
+                req.id = res["data"][i]["code"] + "-req";
+                req.className = "menu_feq";
+                req.appendChild(req_txt);
+                
+                menu_txt1_1.appendChild(tx2);
+                menu_txt1.appendChild(tx1);
+                menu_txt1.appendChild(menu_txt1_1);
+                menu_txt2.appendChild(tx3)
+                menu_inbox.appendChild(menu_img);
+                menu_inbox.appendChild(menu_txt1);
+                menu_inbox.appendChild(menu_txt2);
+                menu_inbox.appendChild(req);
+                menu_box.appendChild(menu_inbox);
+            
+            }
+        }
+    })
+    menuAPI = "http://127.0.0.1:3000/menus?class=STM"
+    fetch(menuAPI)
+    .then(function(data) {
+        return data.json();
+    }).then(function(res) {
+        if(res["data"] == ""){
+            console.log("指定類別並無餐點")
+        }
+        if(res["data"] != ""){
+            for(i = 0 ; i < res["data"].length ; i++){
+                let menu_box = document.getElementById("menu_box3");
+                let menu_inbox = document.createElement("div");
+                let menu_img = document.createElement("img");
+                let menu_txt1 = document.createElement("div");
+                let menu_txt1_1 = document.createElement("a");
+                let menu_txt2 = document.createElement("div");
+                let tx1 = document.createTextNode("$ ");
+                let tx2 = document.createTextNode(res["data"][i]["price"]);
+                let tx3 = document.createTextNode(res["data"][i]["name"]);
+                let req = document.createElement("div");
+                let req_txt = document.createTextNode("1");
+
+                menu_img.src = res["data"][i]["image"];
+                menu_txt1.className = "menu_txt";
+                menu_txt1_1.className = "menu_txt2";
+                menu_txt2.className = "menu_txt";
+                menu_inbox.className = "menu_inbox";
+                menu_inbox.id = res["data"][i]["code"];
+                menu_inbox.setAttribute("onclick","postMenu(this);");
+                req.id = res["data"][i]["code"] + "-req";
+                req.className = "menu_feq";
+                req.appendChild(req_txt);
+                
+                menu_txt1_1.appendChild(tx2);
+                menu_txt1.appendChild(tx1);
+                menu_txt1.appendChild(menu_txt1_1);
+                menu_txt2.appendChild(tx3)
+                menu_inbox.appendChild(menu_img);
+                menu_inbox.appendChild(menu_txt1);
+                menu_inbox.appendChild(menu_txt2);
+                menu_inbox.appendChild(req);
+                menu_box.appendChild(menu_inbox);
+            
+            }
+        }
+    })
+    menuAPI = "http://127.0.0.1:3000/menus?class=DK"
+    fetch(menuAPI)
+    .then(function(data) {
+        return data.json();
+    }).then(function(res) {
+        if(res["data"] == ""){
+            console.log("指定類別並無餐點")
+        }
+        if(res["data"] != ""){
+            for(i = 0 ; i < res["data"].length ; i++){
+                let menu_box = document.getElementById("menu_box4");
+                let menu_inbox = document.createElement("div");
+                let menu_img = document.createElement("img");
+                let menu_txt1 = document.createElement("div");
+                let menu_txt1_1 = document.createElement("a");
+                let menu_txt2 = document.createElement("div");
+                let tx1 = document.createTextNode("$ ");
+                let tx2 = document.createTextNode(res["data"][i]["price"]);
+                let tx3 = document.createTextNode(res["data"][i]["name"]);
+                let req = document.createElement("div");
+                let req_txt = document.createTextNode("1");
+
+                menu_img.src = res["data"][i]["image"];
+                menu_txt1.className = "menu_txt";
+                menu_txt1_1.className = "menu_txt2";
+                menu_txt2.className = "menu_txt";
+                menu_inbox.className = "menu_inbox";
+                menu_inbox.id = res["data"][i]["code"];
+                menu_inbox.setAttribute("onclick","postMenu(this);");
+                req.id = res["data"][i]["code"] + "-req";
+                req.className = "menu_feq";
+                req.appendChild(req_txt);
+                
+                menu_txt1_1.appendChild(tx2);
+                menu_txt1.appendChild(tx1);
+                menu_txt1.appendChild(menu_txt1_1);
+                menu_txt2.appendChild(tx3)
+                menu_inbox.appendChild(menu_img);
+                menu_inbox.appendChild(menu_txt1);
+                menu_inbox.appendChild(menu_txt2);
+                menu_inbox.appendChild(req);
+                menu_box.appendChild(menu_inbox);
+            
+            }
         }
     })
 }
