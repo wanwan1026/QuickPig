@@ -32,6 +32,56 @@ def count():
 @app.route("/work")
 def work():
 	return render_template("work.html")
+@app.route("/pay")
+def pay():
+	return render_template("pay.html")
+
+
+@app.route("/pays",methods=['POST'])
+def POSTpay():
+	tablecode = request.data.decode('utf-8')
+	tablecode = json.loads(tablecode)
+	tablecode = tablecode["table"]
+
+	signup = pymysql.connect(
+		host='ricetia-mysql.cyb5eosysjkk.ap-northeast-1.rds.amazonaws.com',
+		port=3306,
+		user='admin',
+		password=os.getenv("RDS_password"),
+		db='quickpig',
+		cursorclass=pymysql.cursors.DictCursor
+	)
+	with signup.cursor() as cursor:
+		mysqlact = "update `pick` set `finish`='pay' where code = %s and finish = 'true';"
+		mysqlact2 = "update `pick` set `finish`='stop' where code = %s and finish = 'close';"
+		mysqlact3 = "update `usetable` set `status`='false' where code = %s;"
+		cursor.execute(mysqlact,tablecode)
+		cursor.execute(mysqlact2,tablecode)
+		cursor.execute(mysqlact3,tablecode)
+		signup.commit()
+	signup.close()
+
+	return {"ok":"成功付款"}
+
+@app.route("/pays",methods=['GET'])
+def GETpay():
+	tablecode = (request.args.get("tablecode",""))
+
+	signup = pymysql.connect(
+		host='ricetia-mysql.cyb5eosysjkk.ap-northeast-1.rds.amazonaws.com',
+		port=3306,
+		user='admin',
+		password=os.getenv("RDS_password"),
+		db='quickpig',
+		cursorclass=pymysql.cursors.DictCursor
+	)
+	with signup.cursor() as cursor:
+		mysqlact = "SELECT `number`,`content`,`allprice` FROM `pick` WHERE code = %s and finish = 'true';"
+		cursor.execute(mysqlact,tablecode)
+		tablepick = cursor.fetchall()
+	signup.close()
+
+	return {"pick":tablepick}
 
 @app.route("/works",methods=['POST'])
 def POSTwork():
@@ -48,7 +98,7 @@ def POSTwork():
 		cursorclass=pymysql.cursors.DictCursor
 	)
 	with signup.cursor() as cursor:
-		mysqlact = "UPDATE `pick` SET `finish`='true' WHERE number = %s;"
+		mysqlact = "update `pick` set `finish`='true' where number = %s;"
 		cursor.execute(mysqlact,ordercode)
 		signup.commit()
 	signup.close()
@@ -57,11 +107,6 @@ def POSTwork():
 
 @app.route("/works",methods=['GET'])
 def GETwork():
-	today = datetime.date.today()
-	tomorrow = today + datetime.timedelta(days=1)
-	today = str(today)
-	tomorrow = str(tomorrow)
-
 	signup = pymysql.connect(
 		host='ricetia-mysql.cyb5eosysjkk.ap-northeast-1.rds.amazonaws.com',
 		port=3306,
@@ -71,8 +116,8 @@ def GETwork():
 		cursorclass=pymysql.cursors.DictCursor
 	)
 	with signup.cursor() as cursor:
-		mysqlact = "SELECT `number`,`code`,`finish`,`content` FROM `pick` WHERE time >= %s and time < %s and finish = 'false'"
-		cursor.execute(mysqlact,(today,tomorrow))
+		mysqlact = "select `number`,`code`,`finish`,`content` from `pick` where finish = 'false' or finish = 'close'"
+		cursor.execute(mysqlact)
 		tablepick = cursor.fetchall()
 	signup.close()
 
@@ -94,12 +139,15 @@ def GETpick():
 		cursorclass=pymysql.cursors.DictCursor
 	)
 	with signup.cursor() as cursor:
-		mysqlact = "SELECT `number`,`code`,`finish` FROM `pick` WHERE time >= %s and time < %s"
+		mysqlact = "select `number`,`code`,`finish` from `pick` where time >= %s and time < %s;"
 		cursor.execute(mysqlact,(today,tomorrow))
 		tablepick = cursor.fetchall()
+		mysqlact2 = "SELECT * FROM `usetable`;"
+		cursor.execute(mysqlact2)
+		tablestatus = cursor.fetchall()
 	signup.close()
 
-	return {"tablepick":tablepick}
+	return {"tablepick":tablepick,"tablestatus":tablestatus}
 
 @app.route("/table",methods=['GET'])
 def GETtable():
@@ -115,7 +163,7 @@ def GETtable():
 		cursorclass=pymysql.cursors.DictCursor
 		)
 		with signup.cursor() as cursor:
-			mysqlact = "SELECT code,max(time) FROM opentable where code=%s"
+			mysqlact = "select code,max(time) from opentable where code=%s"
 			cursor.execute(mysqlact,tablecode)
 			code_get = cursor.fetchall()
 		signup.close()
@@ -143,8 +191,10 @@ def POSTtable():
 		cursorclass=pymysql.cursors.DictCursor
 	)
 	with signup.cursor() as cursor:
-		mysqlact = "UPDATE `usetable` SET `status`='false' WHERE code = %s;"
+		mysqlact = "update `usetable` set `status`='close' where code = %s;"
+		mysqlact2 = "update pick set finish = 'close' where code = %s and finish = 'false';"
 		cursor.execute(mysqlact,tablecode)
+		cursor.execute(mysqlact2,tablecode)
 		signup.commit()
 	signup.close()
 
@@ -218,22 +268,8 @@ def PATCHtable():
 	# finial check
 	if loginTest1 == True and loginTest2 == True and loginTest3 == True:
 		if code_check[0]["status"] == "false" :
-			signup = pymysql.connect(
-			host='ricetia-mysql.cyb5eosysjkk.ap-northeast-1.rds.amazonaws.com',
-			port=3306,
-			user='admin',
-			password=os.getenv("RDS_password"),
-			db='quickpig',
-			cursorclass=pymysql.cursors.DictCursor
-			)
-			with signup.cursor() as cursor:
-				mysqlact = "UPDATE `usetable` SET `status`='true' WHERE code = %s;"
-				cursor.execute(mysqlact,code_check[0]["code"])
-				signup.commit()
-			signup.close()
-
 			opentime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
-			
+
 			signup = pymysql.connect(
 			host='ricetia-mysql.cyb5eosysjkk.ap-northeast-1.rds.amazonaws.com',
 			port=3306,
@@ -243,8 +279,10 @@ def PATCHtable():
 			cursorclass=pymysql.cursors.DictCursor
 			)
 			with signup.cursor() as cursor:
-				mysqlact = "INSERT INTO opentable (code,time) VALUES (%s,%s)"
-				cursor.execute(mysqlact,(code_check[0]["code"],opentime))
+				mysqlact = "update `usetable` set `status`='true' where code = %s;"
+				cursor.execute(mysqlact,code_check[0]["code"])
+				mysqlact2 = "insert into opentable (code,time) values (%s,%s);"
+				cursor.execute(mysqlact2,(code_check[0]["code"],opentime))
 				signup.commit()
 			signup.close()
 
@@ -263,6 +301,10 @@ def PATCHtable():
 			loginTest3 = False
 
 			return success
+		if code_check[0]["status"] == "close" :
+			error = {"error":True,"message": "　錯誤，前位尚未買單！"}
+			
+			return error
 	else :
 		loginTest1 = False
 		loginTest2 = False
@@ -298,7 +340,7 @@ def PATCHuser():
 		cursorclass=pymysql.cursors.DictCursor
 	)
 	with signup.cursor() as cursor:
-		mysqlact = "SELECT `id`,`name`,`code`,`password` FROM `user` WHERE `code`=%s"
+		mysqlact = "select `id`,`name`,`code`,`password` from `user` where `code`=%s"
 		cursor.execute(mysqlact,code)
 		code_check = cursor.fetchall()
 	signup.close()
@@ -345,7 +387,7 @@ def GETmenus():
 		cursorclass=pymysql.cursors.DictCursor
 	)
 	with signup.cursor() as cursor:
-		mysqlact = "SELECT `name`,`price`,`image`,`code` FROM `menu` WHERE class=%s"
+		mysqlact = "select `name`,`price`,`image`,`code` from `menu` where class=%s"
 		cursor.execute(mysqlact,menuclass)
 		result = cursor.fetchall()
 	signup.close()
@@ -373,7 +415,7 @@ def POSTmenus():
 		cursorclass=pymysql.cursors.DictCursor
 		)
 	with signup.cursor() as cursor:
-		mysqlact = "SELECT count(*) FROM `pick` WHERE time >= %s and time < %s;"
+		mysqlact = "select count(*) from `pick` where time >= %s and time < %s;"
 		cursor.execute(mysqlact,(today,tomorrow))
 		result = cursor.fetchall()
 	signup.close()
@@ -382,7 +424,6 @@ def POSTmenus():
 	order_number = today2 + str(res_number)
 
 	orderData_order = orderData["order"]
-	orderData_order = str(orderData_order)
 	orderData_subtotal = orderData["subtotal"]
 	orderData_table = orderData["table"]
 	finish = "false"
@@ -397,7 +438,7 @@ def POSTmenus():
 			cursorclass=pymysql.cursors.DictCursor
 			)
 	with signup.cursor() as cursor:
-		mysqlact = "INSERT INTO pick (number,content,allprice,code,finish,time) VALUES (%s,%s,%s,%s,%s,%s)"
+		mysqlact = "insert into pick (number,content,allprice,code,finish,time) values (%s,%s,%s,%s,%s,%s)"
 		cursor.execute(mysqlact,(order_number,orderData_order,orderData_subtotal,orderData_table,finish,picktime))
 		signup.commit()
 	signup.close()

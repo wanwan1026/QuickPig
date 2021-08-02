@@ -4,26 +4,54 @@ function getusetable(){
     .then(function(data) {
         return data.json();
     }).then(function(res) {
-        // console.log(res["tablepick"]);
-        // console.log(res["tablepick"][0]["code"]);
-        // console.log(res["tablepick"].length)
         for(let i = res["tablepick"].length - 1 ; i >= 0 ; i--){
-            // console.log(res["tablepick"][i]["number"]);
-            let ordertable = res["tablepick"][i]["code"] + "-table"
-            let table = document.getElementById(ordertable);
-            let neworder = document.createElement("div");
-            let ordertxt = document.createTextNode("單號" + res["tablepick"][i]["number"]);
-            neworder.appendChild(ordertxt)
-            neworder.className = "tableorder"
             if(res["tablepick"][i]["finish"] == "true"){
-                neworder.style = "color: #373C38;background: #D9CD90;";
+                let ordertable = res["tablepick"][i]["code"] + "-table"
+                let table = document.getElementById(ordertable);
+                let neworder = document.createElement("div");
+                let ordertxt = document.createTextNode("單號" + res["tablepick"][i]["number"]);
+                neworder.appendChild(ordertxt)
+                neworder.className = "tableorder"
+                neworder.style = "color: #FFFFFB;background: #005CAF;";
+                table.appendChild(neworder)
             }
-            table.appendChild(neworder)
-            let order = res["tablepick"][i]["code"] + "-order";
-            let orderuse = document.getElementById(order);
-            orderuse.style = "background: #B9EFC9;"
-
+            if(res["tablepick"][i]["finish"] == "false"){
+                let ordertable = res["tablepick"][i]["code"] + "-table"
+                let table = document.getElementById(ordertable);
+                let neworder = document.createElement("div");
+                let ordertxt = document.createTextNode("單號" + res["tablepick"][i]["number"]);
+                neworder.appendChild(ordertxt)
+                neworder.className = "tableorder"
+                neworder.style = "color: #FFFFFB;background: #91989F;";
+                table.appendChild(neworder)
+            }
+            if(res["tablepick"][i]["finish"] == "close"){
+                let ordertable = res["tablepick"][i]["code"] + "-table"
+                let table = document.getElementById(ordertable);
+                let neworder = document.createElement("div");
+                let ordertxt = document.createTextNode("單號" + res["tablepick"][i]["number"]);
+                neworder.appendChild(ordertxt)
+                neworder.className = "tableorder"
+                neworder.style = "color: #FFFFFB;background: #1C1C1C;";
+                table.appendChild(neworder)
+            }
         }
-        // document.getElementById("table").innerHTML = res["table"];
+        for(let i = res["tablestatus"].length - 1 ; i >= 0 ; i--){
+            let order = res["tablestatus"][i]["code"] + "-order";
+            let orderuse = document.getElementById(order);
+            if(res["tablestatus"][i]["status"] == "true"){
+                orderuse.style = "background: #B9EFC9;"
+            }
+            if(res["tablestatus"][i]["status"] == "false"){
+                orderuse.style = "background: #FFFFFB;"
+            }
+            if(res["tablestatus"][i]["status"] == "close"){
+                orderuse.style = "background: #FEDFE1;"
+            }
+        }
     })
+}
+
+function pay(obj){
+    location.href=`http://127.0.0.1:3000/pay?tablecode=${obj.value}`
 }

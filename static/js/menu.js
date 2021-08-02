@@ -226,7 +226,7 @@ function post(){
     orderout = document.getElementById("order_out").innerText;
     orderout = orderout.split("+\n");
     let allpostdata = {};
-    let alllist = [];
+    let alllist = "";
     for( let i = 0 ; i < orderout.length ; i++ ){
         let post_box = orderout[i].split("\n");
         let post_name = post_box[0].replace('"'," ");
@@ -239,10 +239,10 @@ function post(){
         post_feq = post_feq.replace('"',"");
         post_feq = post_feq.toString();
 
-        postdata = {"name":post_name,"price":post_price,"feq":post_feq};
-        alllist.push(postdata);
+        postdata = `${post_name},${post_price},${post_feq}`;
+        alllist = alllist + ";" + postdata
     }
-    allpostdata["order"] = alllist;
+    allpostdata["order"] = alllist.substr(1);
 
     let table = document.getElementById("table").innerText;
     allpostdata["table"] = table;
@@ -285,7 +285,7 @@ function gettable(){
                 let time = new Date();
                 let nowTime = time.getTime();
                 let endTime = res["time"];
-                endTime = new Date(endTime).getTime()+10000;
+                endTime = new Date(endTime).getTime()+1800000;
                 // console.log(endTime)
                 let offsetTime = (endTime - nowTime) / 1000;
                 let hr = parseInt(offsetTime / 60 / 60);

@@ -19,17 +19,18 @@ function getorder(){
             let inbox1_tx2_2 = document.createTextNode("單號 : " + res["data"][i]["number"]);
             inbox1_tx2.appendChild(inbox1_tx2_2);
             let inbox1_tx3 = document.createElement("div");
+
             let content = res["data"][i]["content"]
-            content = content.replace("[{","")
-            content = content.replace("}]","")
-            content = content.split("}, {")
-            let oneorder = "";
-            for(let j = 0 ; j < content.length ; j++){
-                let ordername = content[j].split("', '")[0].split("': '")[1]
-                let orderfeq = content[j].split("feq': '")[1].split("'")[0]
-                oneorder = oneorder + ordername + " *" + orderfeq + " 。 "
+            pick = content.split(";")
+            allpick = ""
+            for(j = 0 ; j < pick.length ;j++){
+                let foodname = pick[j].split(",")[0]
+                let foodfeq = pick[j].split(",")[2]
+                allpick = allpick + "," + " " + foodname + "*" + foodfeq
             }
-            let inbox1_tx3_3 = document.createTextNode("內容 : " + oneorder);
+            allpick = allpick.substr(1) + "。"
+
+            let inbox1_tx3_3 = document.createTextNode("內容 : " + allpick);
             inbox1_tx3.appendChild(inbox1_tx3_3);
             inbox1.appendChild(inbox1_tx1)
             inbox1.appendChild(inbox1_tx2)
