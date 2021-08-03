@@ -3,6 +3,7 @@
     <head>
         <meta charset="utf-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+        <meta http-equiv="refresh"content="5;url=http://127.0.0.1:3000/work">
         <title>QuickPIG</title>
         <style>
             html{
@@ -20,7 +21,7 @@
     <body onload="getorder();">
         <header>
             <div class="header_box">
-                <div class="header_logo" onclick="location.href='http://127.0.0.1:3000'">
+                <div class="header_logo" onclick="loginout();">
                     <img class="header_img" src="{{ url_for('static', filename='resource/LOGO-BIG.png') }}"> 
                 </div>
             </div>

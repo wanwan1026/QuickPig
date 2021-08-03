@@ -250,8 +250,6 @@ function post(){
     let allprice = document.getElementById("order_all").innerText;
     allpostdata["subtotal"] = allprice;
 
-    // console.log(allpostdata);
-
     let postAPI = "http://127.0.0.1:3000/menus"
     fetch(postAPI,{
         method:'POST',
@@ -260,10 +258,20 @@ function post(){
     .then(function(data) {
         return data.json();
     }).then(function(res) {
-        
-        // console.log(res);
-        location.reload();
-
+        if("error" in res){
+            let timeoutbtn = document.getElementById("postbox");
+            let oldbtn = document.getElementById("postbox_btn");
+            let newbtn = document.createElement("button");
+            let btntxt = document.createTextNode("已結單！");
+            newbtn.appendChild(btntxt)
+            newbtn.className = "postbox_btn"
+            timeoutbtn.replaceChild(newbtn,oldbtn)
+            let headerlogo = document.getElementById("headerlogo");
+            headerlogo.setAttribute("onclick","location.href='http://127.0.0.1:3000'");
+        }
+        if("seccess" in res){
+            location.reload();
+        }
     })
 }
 
@@ -275,8 +283,6 @@ function gettable(){
         return data.json();
     }).then(function(res) {
         if("tablecode" in res){
-            // console.log(res);
-            // console.log(res["time"]);
             let tableImf = document.getElementById("table");
             let tablecode = document.createTextNode(res["tablecode"]);
             tableImf.removeChild(tableImf.firstChild)
@@ -285,8 +291,10 @@ function gettable(){
                 let time = new Date();
                 let nowTime = time.getTime();
                 let endTime = res["time"];
-                endTime = new Date(endTime).getTime()+1800000;
-                // console.log(endTime)
+
+                // 用餐時間設定
+                endTime = new Date(endTime).getTime()+120000;
+
                 let offsetTime = (endTime - nowTime) / 1000;
                 let hr = parseInt(offsetTime / 60 / 60);
                 let min = parseInt((offsetTime / 60) % 60);
@@ -335,8 +343,6 @@ function gettable(){
             },1000);
         }
         if("error" in res){
-            // console.log(res["message"]);
-            let error = res["message"];
             console.log(res["message"]);
             window.location.href='http://127.0.0.1:3000';
         }
@@ -551,8 +557,16 @@ function timeout(){
             let headerlogo = document.getElementById("headerlogo");
             headerlogo.setAttribute("onclick","location.href='http://127.0.0.1:3000'");
         }
-        // console.log(res);
-        // window.location.href='http://127.0.0.1:3000';
-        
+        if("error" in res){
+            let timeoutbtn = document.getElementById("postbox");
+            let oldbtn = document.getElementById("postbox_btn");
+            let newbtn = document.createElement("button");
+            let btntxt = document.createTextNode("已結單！");
+            newbtn.appendChild(btntxt)
+            newbtn.className = "postbox_btn"
+            timeoutbtn.replaceChild(newbtn,oldbtn)
+            let headerlogo = document.getElementById("headerlogo");
+            headerlogo.setAttribute("onclick","location.href='http://127.0.0.1:3000'");
+        }
     })
 }

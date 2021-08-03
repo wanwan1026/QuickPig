@@ -54,15 +54,19 @@ def POSTpay():
 	with signup.cursor() as cursor:
 		mysqlact = "update `pick` set `finish`='pay' where code = %s and finish = 'true';"
 		mysqlact2 = "update `pick` set `finish`='stop' where code = %s and finish = 'close';"
-		mysqlact3 = "update `usetable` set `status`='false' where code = %s;"
+		mysqlact3 = "update `pick` set `finish`='stop' where code = %s and finish = 'false';"
+		mysqlact4 = "update `usetable` set `status`='false' where code = %s;"
 		cursor.execute(mysqlact,tablecode)
 		cursor.execute(mysqlact2,tablecode)
 		cursor.execute(mysqlact3,tablecode)
+		cursor.execute(mysqlact4,tablecode)
 		signup.commit()
 	signup.close()
 
-	return {"ok":"成功付款"}
+	if "table_code" in session:
+		del session["table_code"]
 
+	return {"ok":"成功付款"}
 @app.route("/pays",methods=['GET'])
 def GETpay():
 	tablecode = (request.args.get("tablecode",""))
@@ -83,6 +87,29 @@ def GETpay():
 
 	return {"pick":tablepick}
 
+
+@app.route("/works",methods=['GET'])
+def GETwork():
+	signup = pymysql.connect(
+		host='ricetia-mysql.cyb5eosysjkk.ap-northeast-1.rds.amazonaws.com',
+		port=3306,
+		user='admin',
+		password=os.getenv("RDS_password"),
+		db='quickpig',
+		cursorclass=pymysql.cursors.DictCursor
+	)
+	with signup.cursor() as cursor:
+		mysqlact = "select `number`,`code`,`finish`,`content` from `pick` where finish = 'false' or finish = 'close'"
+		cursor.execute(mysqlact)
+		tablepick = cursor.fetchall()
+	signup.close()
+
+	if "login_code" in session :
+		logincode = session["login_code"]
+	if "login_code" not in session :
+		logincode = "false"
+
+	return {"data":tablepick,"logincode":logincode}
 @app.route("/works",methods=['POST'])
 def POSTwork():
 	ordercode = request.data.decode('utf-8')
@@ -105,31 +132,9 @@ def POSTwork():
 
 	return {"ok":ordercode}
 
-@app.route("/works",methods=['GET'])
-def GETwork():
-	signup = pymysql.connect(
-		host='ricetia-mysql.cyb5eosysjkk.ap-northeast-1.rds.amazonaws.com',
-		port=3306,
-		user='admin',
-		password=os.getenv("RDS_password"),
-		db='quickpig',
-		cursorclass=pymysql.cursors.DictCursor
-	)
-	with signup.cursor() as cursor:
-		mysqlact = "select `number`,`code`,`finish`,`content` from `pick` where finish = 'false' or finish = 'close'"
-		cursor.execute(mysqlact)
-		tablepick = cursor.fetchall()
-	signup.close()
-
-	return {"data":tablepick}
 
 @app.route("/counts",methods=['GET'])
 def GETpick():
-	today = datetime.date.today()
-	tomorrow = today + datetime.timedelta(days=1)
-	today = str(today)
-	tomorrow = str(tomorrow)
-
 	signup = pymysql.connect(
 		host='ricetia-mysql.cyb5eosysjkk.ap-northeast-1.rds.amazonaws.com',
 		port=3306,
@@ -139,15 +144,21 @@ def GETpick():
 		cursorclass=pymysql.cursors.DictCursor
 	)
 	with signup.cursor() as cursor:
-		mysqlact = "select `number`,`code`,`finish` from `pick` where time >= %s and time < %s;"
-		cursor.execute(mysqlact,(today,tomorrow))
+		mysqlact = "select `number`,`code`,`finish` from `pick` where finish = 'false' or finish = 'close' or finish = 'true';"
+		cursor.execute(mysqlact)
 		tablepick = cursor.fetchall()
 		mysqlact2 = "SELECT * FROM `usetable`;"
 		cursor.execute(mysqlact2)
 		tablestatus = cursor.fetchall()
 	signup.close()
 
-	return {"tablepick":tablepick,"tablestatus":tablestatus}
+	if "login_code" in session :
+		logincode = session["login_code"]
+	if "login_code" not in session :
+		logincode = "false"
+
+	return {"tablepick":tablepick,"tablestatus":tablestatus,"logincode":logincode}
+
 
 @app.route("/table",methods=['GET'])
 def GETtable():
@@ -175,12 +186,16 @@ def GETtable():
 		error = {"error":True,"message": "　伺服器錯誤！無法正確載入用餐資訊"}
 
 		return error
-
 @app.route("/table",methods=['POST'])
 def POSTtable():
 	tablecode = request.data.decode('utf-8')
 	tablecode = json.loads(tablecode)
 	tablecode = tablecode["timeout"]
+
+	if "table_code" not in session:
+		error = {"error":True,"message": "　已結單！"}
+
+		return error
 
 	signup = pymysql.connect(
 		host='ricetia-mysql.cyb5eosysjkk.ap-northeast-1.rds.amazonaws.com',
@@ -201,7 +216,6 @@ def POSTtable():
 	del session["table_code"]
 
 	return {"ok":tablecode}
-
 @app.route("/table",methods=['PATCH'])
 def PATCHtable():
 	tabledata = request.data.decode('utf-8')
@@ -313,6 +327,15 @@ def PATCHtable():
 
 		return error
 
+
+@app.route("/user",methods=['GET'])
+def GETuser():
+	if "login_code" in session :
+		success = {"success":True}
+		return success
+	else :
+		error = {"error":True,"message": "　尚未有會員登入！"}
+		return error
 @app.route("/user",methods=['PATCH'])
 def PATCHuser():
 	userdata = request.data.decode('utf-8')
@@ -373,6 +396,19 @@ def PATCHuser():
 		error = {"error":True,"message": "　伺服器錯誤！"}
 
 		return error
+@app.route("/user",methods=['DELETE'])
+def DELETEuser():
+	if "login_id" in session :
+		del session["login_id"]
+		del session["login_name"]
+		del session["login_code"]
+		success = {"success":True}
+		return success
+	else :
+		error = {"error":True,"message": "　無需要刪除之登入資料！"}
+
+		return error
+
 
 @app.route("/menus",methods=['GET'])
 def GETmenus():
@@ -393,9 +429,13 @@ def GETmenus():
 	signup.close()
 
 	return {"data":result}
-
 @app.route("/menus",methods=['POST'])
 def POSTmenus():
+	if "table_code" not in session:
+		error = {"error":True,"message": "　已結單！"}
+
+		return error
+
 	orderData = request.data.decode('utf-8')
 	orderData = json.loads(orderData)
 
@@ -443,7 +483,9 @@ def POSTmenus():
 		signup.commit()
 	signup.close()
 
-	return {"ok":True}
+	seccess = {"seccess":True,"message": "　成功送出點餐！"}
+
+	return seccess
 
 
 app.run(port=3000)
