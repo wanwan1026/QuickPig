@@ -18,6 +18,9 @@ function getpay(){
     .then(function(data) {
         return data.json();
     }).then(function(res) {
+        if("error" in res){
+            location.href='http://127.0.0.1:3000'
+        }
         let allprice = 0
         for(i = 0 ; i < res["pick"].length ; i++){
             let contentnumber = res["pick"][i]["number"]

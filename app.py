@@ -71,6 +71,10 @@ def POSTpay():
 def GETpay():
 	tablecode = (request.args.get("tablecode",""))
 
+	if "login_id" not in session :
+		error = {"error":True,"message": "　尚未登入！"}
+		return error
+
 	signup = pymysql.connect(
 		host='ricetia-mysql.cyb5eosysjkk.ap-northeast-1.rds.amazonaws.com',
 		port=3306,
@@ -116,25 +120,32 @@ def POSTwork():
 	ordercode = json.loads(ordercode)
 	ordercode = ordercode["ok"]
 
-	signup = pymysql.connect(
-		host='ricetia-mysql.cyb5eosysjkk.ap-northeast-1.rds.amazonaws.com',
-		port=3306,
-		user='admin',
-		password=os.getenv("RDS_password"),
-		db='quickpig',
-		cursorclass=pymysql.cursors.DictCursor
-	)
-	with signup.cursor() as cursor:
-		mysqlact = "update `pick` set `finish`='true' where number = %s;"
-		cursor.execute(mysqlact,ordercode)
-		signup.commit()
-	signup.close()
+	if "login_code" not in session :
+		error = {"error":True,"message": "　已結單！"}
+		return error
 
-	return {"ok":ordercode}
+	if "login_code" in session :
+		signup = pymysql.connect(
+			host='ricetia-mysql.cyb5eosysjkk.ap-northeast-1.rds.amazonaws.com',
+			port=3306,
+			user='admin',
+			password=os.getenv("RDS_password"),
+			db='quickpig',
+			cursorclass=pymysql.cursors.DictCursor
+		)
+		with signup.cursor() as cursor:
+			mysqlact = "update `pick` set `finish`='true' where number = %s;"
+			cursor.execute(mysqlact,ordercode)
+			signup.commit()
+		signup.close()
+
+		return {"ok":ordercode}
 
 
 @app.route("/counts",methods=['GET'])
 def GETpick():
+
+
 	signup = pymysql.connect(
 		host='ricetia-mysql.cyb5eosysjkk.ap-northeast-1.rds.amazonaws.com',
 		port=3306,
@@ -162,6 +173,7 @@ def GETpick():
 
 @app.route("/table",methods=['GET'])
 def GETtable():
+	
 	if "table_code" in session:
 		tablecode = session["table_code"]
 
@@ -177,7 +189,13 @@ def GETtable():
 			mysqlact = "select code,max(time) from opentable where code=%s"
 			cursor.execute(mysqlact,tablecode)
 			code_get = cursor.fetchall()
+			mysqlact2 = "select status from usetable where code=%s"
+			cursor.execute(mysqlact2,tablecode)
+			code_get2 = cursor.fetchall()
 		signup.close()
+
+		if code_get2[0]["status"] == "false":
+			return {"error":True,"message": "　伺服器錯誤！無法正確載入用餐資訊"}
 
 		tabletime = str(code_get[0]["max(time)"])
 
@@ -212,8 +230,6 @@ def POSTtable():
 		cursor.execute(mysqlact2,tablecode)
 		signup.commit()
 	signup.close()
-
-	del session["table_code"]
 
 	return {"ok":tablecode}
 @app.route("/table",methods=['PATCH'])
@@ -282,7 +298,11 @@ def PATCHtable():
 	# finial check
 	if loginTest1 == True and loginTest2 == True and loginTest3 == True:
 		if code_check[0]["status"] == "false" :
+			# localtime
 			opentime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
+			# opentime = (datetime.datetime.now())+datetime.timedelta(hours=8)
+			# opentime = opentime.replace(microsecond=0)
+			# opentime = str(opentime)
 
 			signup = pymysql.connect(
 			host='ricetia-mysql.cyb5eosysjkk.ap-northeast-1.rds.amazonaws.com',
@@ -297,6 +317,12 @@ def PATCHtable():
 				cursor.execute(mysqlact,code_check[0]["code"])
 				mysqlact2 = "insert into opentable (code,time) values (%s,%s);"
 				cursor.execute(mysqlact2,(code_check[0]["code"],opentime))
+				mysqlact3 = "update `pick` set `finish`='stop' where finish = 'true' and code = %s;"
+				cursor.execute(mysqlact3,code_check[0]["code"])
+				mysqlact4 = "update `pick` set `finish`='stop' where finish = 'close'and code = %s;"
+				cursor.execute(mysqlact4,code_check[0]["code"])
+				mysqlact5 = "update `pick` set `finish`='stop' where finish = 'false' and code = %s;"
+				cursor.execute(mysqlact5,code_check[0]["code"])
 				signup.commit()
 			signup.close()
 
@@ -439,12 +465,16 @@ def POSTmenus():
 	orderData = request.data.decode('utf-8')
 	orderData = json.loads(orderData)
 
+	# localtime
 	today = datetime.date.today()
-	tomorrow = today + datetime.timedelta(days=1)
 	today2 = today.strftime('%y%m%d')
 	today = str(today)
-	tomorrow = str(tomorrow)
 	today2 = str(today2)
+
+	# today = (datetime.datetime.now())+datetime.timedelta(hours=8)
+	# today = today.replace(microsecond=0)
+	# today2 = today.strftime("%Y%m%d")
+	# today = today.strftime("%Y-%m-%d")
 	
 	signup = pymysql.connect(
 		host='ricetia-mysql.cyb5eosysjkk.ap-northeast-1.rds.amazonaws.com',
@@ -455,8 +485,8 @@ def POSTmenus():
 		cursorclass=pymysql.cursors.DictCursor
 		)
 	with signup.cursor() as cursor:
-		mysqlact = "select count(*) from `pick` where time >= %s and time < %s;"
-		cursor.execute(mysqlact,(today,tomorrow))
+		mysqlact = "select count(*) from `pick` where time >= %s;"
+		cursor.execute(mysqlact,today)
 		result = cursor.fetchall()
 	signup.close()
 
@@ -467,7 +497,14 @@ def POSTmenus():
 	orderData_subtotal = orderData["subtotal"]
 	orderData_table = orderData["table"]
 	finish = "false"
+
+	# localtime
 	picktime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
+
+	# picktime = (datetime.datetime.now())+datetime.timedelta(hours=8)
+	# picktime = picktime.replace(microsecond=0)
+	# picktime = picktime.strftime('%Y-%m-%d %H:%M:%S')
+	# picktime = str(picktime)
 
 	signup = pymysql.connect(
 			host='ricetia-mysql.cyb5eosysjkk.ap-northeast-1.rds.amazonaws.com',

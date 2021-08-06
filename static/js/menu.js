@@ -265,6 +265,7 @@ function post(){
             let btntxt = document.createTextNode("已結單！");
             newbtn.appendChild(btntxt)
             newbtn.className = "postbox_btn"
+            newbtn.id = "postbox_btn"
             timeoutbtn.replaceChild(newbtn,oldbtn)
             let headerlogo = document.getElementById("headerlogo");
             headerlogo.setAttribute("onclick","location.href='http://127.0.0.1:3000'");

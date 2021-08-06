@@ -68,10 +68,9 @@ function postok(obj){
     .then(function(data) {
         return data.json();
     }).then(function(res) {
-        
-        console.log(res);
-        location.reload();
-
+        if(res != ""){
+            location.reload();
+        }
     })
 }
 
