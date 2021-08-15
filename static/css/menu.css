@@ -1,0 +1,342 @@
+html{
+	background: #F7F7F7;
+}
+body{
+	background: #FCFAF2;
+	margin: 0px;
+}
+/* ASIDEMENU */
+aside{
+	width: 400px;
+	height: 100vh;
+	background-color: #BDC0BA;
+	border-right: 1px #DADDD6 solid;
+	/* BFC:右邊盒子觸發BFC，使其不與浮動盒子區域重疊，因此會重新計算寬度 */
+	float:left;
+	/* PRESET HIDE */
+	/* display: none; */
+}
+.sidebtn{
+	width: 20px;
+	height: 90px;
+	color: #686666;
+	background-color: #D1D1D1;
+	border-radius: 0 5px 5px 0;
+	border: 0.5px #BDC0BA solid;
+	box-shadow: 5px 0 5px rgba(23, 23, 54, 0.6);
+	position: absolute;
+	left: 400.5px;
+	top: 45vh;
+	cursor: pointer;
+	/* PRESET HIDE */
+	/* display: none; */
+}
+.sidebtn2{
+	width: 20px;
+	height: 90px;
+	color: #686666;
+	background-color: #D1D1D1;
+	border-radius: 0 5px 5px 0;
+	border: 0.5px #BDC0BA solid;
+	box-shadow: 5px 0 5px rgba(23, 23, 54, 0.6);
+	position: absolute;
+	left: 0;
+	top: 45vh;
+	cursor: pointer;
+	/* PRESET HIDE */
+	display: none;
+}
+button a{
+	margin-left: -5px;
+}
+button b{
+	margin-left: -3px;
+}
+.outside{
+	height: 100vh;
+	/* FILL */
+	display: flex;
+	flex-flow: column nowrap;
+}
+.infomation{
+	width: 90%;
+	background: #FFFFFB;
+	border: 2px #BDC0BA solid;
+	border-radius: 10px;
+	margin: 10px auto;
+	text-align: center;
+	/* FILL */
+	flex-basis: 115px;
+}
+.infomation_txt1{
+	margin: 10px;
+	font-weight:bold;
+}
+.infomation_txt2{
+	margin: 10px;
+	font-weight:bold;
+	color: crimson;
+}
+.order{
+	width: 90%;
+	margin: 0px auto;
+	margin-bottom: 10px;
+	background: #FFFFFB;
+	border: 2px #BDC0BA solid;
+	/* HIDE SCROLL */
+	overflow:auto;
+	/* FILL */
+	flex: 1;
+}
+/* HIDE SCROLL *//*chrome 和Safari*/
+.order::-webkit-scrollbar { width: 0 !important }
+/* HIDE SCROLL *//*IE 10+*/
+.order { -ms-overflow-style: none; }
+/* HIDE SCROLL *//*Firefox*/
+.order { overflow: -moz-scrollbars-none; }
+.order_box{
+	width: 90%;
+	font-size: 20px;
+	font-weight: bold;
+	color: #686666;
+	border-bottom: 2px #e2dddd solid;
+	padding-bottom: 5px;
+	margin: 10px;
+	display: inline-block;
+}
+.order_box2{
+	width: 90%;
+	font-size: 20px;
+	font-weight: bold;
+	color: #686666;
+	border-top: 2px #929090 solid;
+	padding-top: 5px;
+	margin: 10px;
+	display: inline-block;
+}
+.order_text1{
+	float: left;
+}
+.order_text2{
+	float: right;
+}
+.order_text22{
+	width: 50px;
+	height: 25px;
+	font-size: 20px;
+	font-weight: normal;
+	border: 1px #686666 solid;
+	line-height: 23px;
+	text-align: center;
+	display:inline-block;
+	vertical-align: top;
+	margin-right: -1px;
+	margin-left: -1px;
+}
+.order_text2 button{
+	width: 27px;
+	height: 27px;
+	/* margin: -1px; */
+	outline:none;
+}
+.order_text2 input{
+	width: 30px;
+	height: 19px;
+	text-align: center;
+	outline:none;
+}
+.order_number{
+	width: 97%;
+	display: inline-block;
+}
+.order_text1 a{
+	line-height: 30px;
+}
+
+.postbox{
+	width: 100%;
+	margin: 0px auto;
+	background: #686666;
+	/* FILL */
+	flex-basis: 100px;
+	text-align: center;
+}
+.postbox_btn{
+	width: 90%;
+	height: 80%;
+	font-size: 25px;
+	font-weight: bold;
+	border-radius: 5px;
+    background: rgb(208,90,110);
+	background: linear-gradient(90deg, rgba(208,90,110,1) 0%, rgba(159,53,58,1) 35%, rgba(181,73,91,1) 100%);
+    color: #FFFFFB;
+    border:none;
+    cursor: pointer;
+	margin-top: 10px;
+}
+.postbox_btn:active{
+    background: rgb(215,113,130);
+	background: linear-gradient(90deg, rgba(215,113,130,1) 0%, rgba(157,66,70,1) 35%, rgba(185,95,110,1) 100%);
+}
+/* MAIN *//* HEADER */
+main{
+	height: 100vh;
+	background: #FCFAF2;
+	/* BFC:右邊盒子觸發BFC，使其不與浮動盒子區域重疊，因此會重新計算寬度 */
+	overflow:hidden;
+
+	height: 100vh;
+	/* FILL */
+	display: flex;
+	flex-flow: column nowrap;
+}
+header{
+	width: 100%;
+	background: #FFFFFB;
+    box-shadow:3px 0px 10px rgb(230, 230, 224);
+	
+}
+.header_box{
+	max-width: 1200px;
+	height: 70px;
+	margin: 0px auto;
+	align-items: center;
+	/* FILL */
+	flex-basis: 70px;
+}
+.header_logo{
+	width: 120px;
+	display:inline-block;
+	vertical-align: top;
+	margin-left: 10px;
+}
+.header_img{
+	width: 100%;
+}
+.header_nenu1{
+	width: 15%;
+	height: 100%;
+	font-size: 20px;
+	font-weight: bold;
+	color: #FFFFFB;
+	border-radius: 100px;
+	background-color: #9F353A;
+	border-top: 10px #FFFFFB solid;
+	border-bottom: 10px #FFFFFB double;
+	border-left: 20px #FFFFFB solid;
+	border-right: 20px #FFFFFB solid;
+	display:inline-block;
+	vertical-align: top;
+	cursor: pointer;
+}
+.header_nenu2{
+	width: 15%;
+	height: 100%;
+	font-size: 20px;
+	font-weight: bold;
+	color: #9F353A;
+	border-radius: 100px;
+	background-color: #FFFFFB;
+	border-top: 10px #FFFFFB solid;
+	border-bottom: 10px #FFFFFB solid;
+	border-left: 20px #FFFFFB solid;
+	border-right: 20px #FFFFFB solid;
+	display:inline-block;
+	vertical-align: top;
+	cursor: pointer;
+}
+/* MAIN *//* MENU */
+.open_txt{
+	width: 100%;
+	text-align: center;
+	color: #686666;
+}
+.menu{
+	width: 90%;
+	max-width: 1118px;
+	margin: 10px auto;
+	margin-bottom: 30px;
+	/* HIDE SCROLL */
+	overflow:auto;
+	/* FILL */
+	flex: 1;
+}
+/* HIDE SCROLL *//*chrome 和Safari*/
+.menu::-webkit-scrollbar { width: 0 !important }
+/* HIDE SCROLL *//*IE 10+*/
+.menu { -ms-overflow-style: none; }
+/* HIDE SCROLL *//*Firefox*/
+.menu { overflow: -moz-scrollbars-none; }
+.menu_box0{
+	margin: 0px auto;
+}
+.menu_box0 img{
+	width: 98%;
+	height: 80%;
+	margin: 2px;
+	border-top-left-radius: 30px;
+	border-top-right-radius: 30px;
+}
+.menu_box1{
+	margin: 0px auto;
+	display: none;
+}
+.menu_box1 img{
+	width: 98%;
+	height: 80%;
+	margin: 2px;
+	border-top-left-radius: 30px;
+	border-top-right-radius: 30px;
+}
+.menu_inbox{
+	width: 266px;
+	height: 280px;
+	margin: 5px;
+	display:inline-block;
+	vertical-align: top;
+	background: #FFFFFB;
+	border-top-left-radius: 30px;
+	border-top-right-radius: 30px;
+	border-bottom-left-radius: 5px;
+	border-bottom-right-radius: 5px;
+	box-shadow:1px 1px 3px 2px #cccccc;
+	position: relative;
+}
+.menu_feq{
+	width: 50px;
+	height: 50px;
+	font-size: 25px;
+	line-height: 50px;
+	font-weight: bold;
+	text-align: center;
+	color: #FFFFFB;
+	background: radial-gradient(circle, rgba(217,98,118,1) 0%, rgba(158,53,58,1) 64%, rgba(186,79,97,1) 100%);
+	border-radius: 100px;
+	position: absolute;
+	z-index: 1;
+	top: 10px;
+	right: 10px;
+	/* PRESET HIDE */
+	display: none;
+}
+.menu_txt{
+	font-size: 18px;
+	color: #686666;
+	font-weight: bold;
+	margin-left: 10px;
+}
+.menu_txt2{
+	font-weight: normal;
+}
+
+
+@media (max-width:1240px){
+	.menu{max-width: 840px;}
+}
+@media (max-width:930px){
+	.menu{max-width: 556px;}
+}
+@media (max-width:620px){
+	.menu{max-width: 276px;}
+}
+

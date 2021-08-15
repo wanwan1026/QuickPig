@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+        <title>QuickPIG</title>
+        <style>
+            html{
+                background: #FCFAF2;
+            }
+            body{
+                margin: 0px;
+                height: 100vh;
+                background: #FCFAF2;
+            }
+        </style>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/header.css') }}"/>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/pay_main.css') }}"/>
+    </head>
+    <body onload="getpay();">
+        <header>
+            <div class="header_box">
+                <div class="header_logo" onclick="location.href='http://127.0.0.1:3000'">
+                    <img class="header_img" src="{{ url_for('static', filename='resource/LOGO-BIG.png') }}"> 
+                </div>
+            </div>
+        </header>
+        <main>
+            <div class="table" id="table_box">
+                <a class="table_tx1" id="table_tx1">A3</a>
+                <a>點餐資訊</a>
+            </div>
+            <div class="out_tableimf">
+                <div class="in_tableimf" id="in_tableimf">
+                    <!-- <div class="pick">
+                        <div class="pick_table">
+                            <a>單號123456</a>
+                        </div>
+                        <div >
+                            <div class="pick_imf">
+                            可爾必思*1,可爾必思*1,可爾必思*1,可爾必思*1,可爾必思*1,
+                            可爾必思*1,可爾必思*1,可爾必思*1,可爾必思*1,可爾必思*1,
+                            可爾必思*1,可爾必思*1,可爾必思*1,可爾必思*1,可爾必思*1,
+                            可爾必思*1,可爾必思*1,可爾必思*1,可爾必思*1,可爾必思*1,
+                            可爾必思*1,可爾必思*1,可爾必思*1,可爾必思*1,可爾必思*1,
+                            可爾必思*1,可爾必思*1,可爾必思*1,可爾必思*1,可爾必思*1,
+                            可爾必思*1,可爾必思*1,可爾必思*1,可爾必思*1,可爾必思*1,
+                            可爾必思*1,可爾必思*1,可爾必思*1,可爾必思*1,可爾必思*1,
+                            可爾必思*1,可爾必思*1,可爾必思*1,可爾必思*1,可爾必思*1,
+                            可爾必思*1,可爾必思*1,可爾必思*1,可爾必思*1,可爾必思*1,
+                            可爾必思*1,可爾必思*1,可爾必思*1,可爾必思*1,可爾必思*1,
+                            可爾必思*1,可爾必思*1,可爾必思*1,可爾必思*1,可爾必思*1,
+                            可爾必思*1,可爾必思*1,可爾必思*1,可爾必思*1,可爾必思*1,
+                            可爾必思*1,可爾必思*1,可爾必思*1,可爾必思*1,可爾必思*1,
+                            可爾必思*1,可爾必思*1,可爾必思*1,可爾必思*1,可爾必思*1,
+                            </div>
+                        </div>
+                    </div> -->
+                </div>
+            </div>
+            <div class="price" id="allprice_box">
+                <a class="price_txt">
+                    總金額 <a id="allprice">1200</a> 台幣
+                </a>
+                <div class="price_btn">
+                    <button onclick="pay();">現金付款</button>
+                </div>   
+            </div>
+        </main>
+        <script src="{{ url_for('static', filename='js/pay.js') }}"></script>
+    </body>
+</html>

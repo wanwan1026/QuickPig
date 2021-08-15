@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+        <meta http-equiv="refresh"content="10;url=http://127.0.0.1:3000/work">
+        <title>QuickPIG</title>
+        <style>
+            html{
+                background: #FCFAF2;
+            }
+            body{
+                margin: 0px;
+                height: 100vh;
+                background: #FCFAF2;
+            }
+        </style>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/header.css') }}"/>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/work.css') }}"/>
+    </head>
+    <body onload="getorder();">
+        <header>
+            <div class="header_box">
+                <div class="header_logo" onclick="loginout();">
+                    <img class="header_img" src="{{ url_for('static', filename='resource/LOGO-BIG.png') }}"> 
+                </div>
+            </div>
+        </header>
+        <main id="main">
+            <!-- <div class="work">
+                <div class="work_txt02">
+                    <div>第三桌</div>
+                    <div>點餐時間 : 18:16:34</div>
+                    <div>餐點內容 : </div>
+                    <div>蒜味蕈菇鱈魚堡*2,藍帶起司豬排堡*1</div>
+                </div>
+                <div class="gb_box">
+                    <button class="go_btn">完成餐點</button>
+                </div>
+            </div> -->
+        </main>
+        <script src="{{ url_for('static', filename='js/work.js') }}"></script>
+    </body>
+</html>

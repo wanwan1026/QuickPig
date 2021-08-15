@@ -1,0 +1,21 @@
+header{
+    max-width: 100%;
+    height: 70px;
+    box-shadow:3px 0px 10px rgb(230, 230, 224);
+    background: #ffff;
+}
+.header_box{
+    max-width: 1200px;
+    height: 70px;
+    padding: 5px;    
+    margin: 0px auto;
+    flex: inline-block;
+}
+.header_logo{
+    width: 100px;
+    height: 100px;
+    float:left;
+}
+.header_img{
+    width: 100%;
+}
